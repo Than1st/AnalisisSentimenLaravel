@@ -31,10 +31,10 @@ class PreprocessingController extends Controller
         echo "<script>window.onload = function() {
             successSwal()
         }</script>";
-        $data = [
-            'dataTwitterCount' => $this->PreModel->getDataTwitterCount()
-        ];
-        return redirect('/preprocessing');
+        // $data = [
+        //     'dataTwitterCount' => $this->PreModel->getDataTwitterCount()
+        // ];
+        // return redirect('/preprocessing');
     }
 
     public function textPreprocessing($text)
