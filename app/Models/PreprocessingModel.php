@@ -8,12 +8,31 @@ use Illuminate\Support\Facades\DB;
 
 class PreprocessingModel extends Model
 {
-    public function getDataPagination($keyword)
+    public function getDataTwitter()
     {
         return DB::table('data_twitter')
-            ->where('data_twitter.user', 'like', '%' . $keyword . '%')
-            ->orwhere('data_twitter.real_text', 'like', '%' . $keyword . '%')
+            ->select('id_tweet', 'real_text')
+            ->where('status_preprocessing', 0)
+            ->get();
+    }
+    public function getDataTeksBersih($keyword)
+    {
+        return DB::table('teks_bersih')
+            ->select('teks_bersih.id_teks_bersih', 'teks_bersih.clean_text', 'teks_bersih.label_sentimen', 'data_twitter.user', 'data_twitter.real_text')
+            ->where('teks_bersih.clean_text', 'like', '%' . $keyword . '%')
+            ->leftJoin('data_twitter', 'teks_bersih.id_tweet', '=', 'data_twitter.id_tweet')
             ->paginate(10);
+    }
+
+    public function insertTeksBersih($data)
+    {
+        return DB::table('teks_bersih')->insert($data);
+    }
+
+    public function updateAllStatusPreprocessing()
+    {
+        return DB::table('data_twitter')
+            ->update(['status_preprocessing' => 1]);
     }
 
     public function getStopword()
@@ -30,6 +49,6 @@ class PreprocessingModel extends Model
     }
     public function getDataTwitterCount()
     {
-        return DB::table('data_twitter')->count();
+        return DB::table('data_twitter')->where('status_preprocessing', 0)->count();
     }
 }

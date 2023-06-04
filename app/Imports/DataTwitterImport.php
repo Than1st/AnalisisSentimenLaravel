@@ -14,11 +14,13 @@ class DataTwitterImport implements ToModel
      */
     public function model(array $row)
     {
+        $UNIX_DATE = ($row[0] - 25569) * 86400;
+        $date_column = gmdate("Y-m-d H:i:s", $UNIX_DATE);
         return new DataTwitterModel([
             // 'id_tweet' => $row[11],
             'user' => $row[1],
-            'created_at' => '2023-05-30 10:28:32',
-            'real_text' => '"' . $row[7] . '"',
+            'created_at' => $date_column,
+            'real_text' => $row[7],
         ]);
     }
 }

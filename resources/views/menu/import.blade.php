@@ -36,7 +36,7 @@
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-            <input type="submit" class="btn btn-primary btn-md btn-block" id="btnSubmit" value="Import Data ke Database" disabled>
+            <input type="submit" class="btn btn-primary btn-md btn-block" id="btnSubmit" value="Import Data ke Database" onclick="loadingSwal()" disabled>
         </form>
     </div>
 </div>
@@ -46,7 +46,7 @@
         <div class="table-responsive">
             <div class="d-flex align-items-center justify-content-between mb-1 p-1">
                 <div>
-                    <button class="btn btn-primary btn-md btn-block" data-bs-toggle="modal" data-bs-target="#myModal" <?php if (count($tweets) == 0) {
+                    <button class="btn btn-danger btn-md btn-block" data-bs-toggle="modal" data-bs-target="#myModal" <?php if (count($tweets) == 0) {
                                                                                                                             echo "disabled";
                                                                                                                         } ?>>Hapus Semua Data</button>
                     <div class="modal" id="myModal">
@@ -120,6 +120,19 @@
 <script>
     function onChangeFile(value) {
         document.getElementById("btnSubmit").disabled = false;
+    }
+
+    function loadingSwal() {
+        Swal.fire({
+            title: 'Mohon Tunggu',
+            text: 'Sedang melakukan Import Data',
+            imageUrl: '{{ asset("image/loading.gif") }}',
+            imageWidth: 200,
+            imageHeight: 200,
+            imageAlt: 'Custom image',
+            allowOutsideClick: false,
+            showConfirmButton: false
+        });
     }
 </script>
 @include('sweetalert::alert')

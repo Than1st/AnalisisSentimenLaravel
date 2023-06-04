@@ -1,12 +1,6 @@
 @extends('layout.template')
 
 @section('content')
-<?php
-
-use App\Http\Controllers\PreprocessingController;
-
-PreprocessingController::startPreprocessing();
-?>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Preprocessing</h1>
 </div>
@@ -15,18 +9,7 @@ PreprocessingController::startPreprocessing();
         <div class="table-responsive">
             <div class="d-flex align-items-center justify-content-between mb-1 p-1">
                 <div>
-                    <!-- <script>
-                        window.onload = function() {
-                            successSwal()
-                        }
-                    </script> -->
-                    <form action="{{ route('startPreprocessing') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <button type="submit">test</button>
-                    </form>
-                    <button class="btn btn-primary btn-md btn-block" data-bs-toggle="modal" data-bs-target="#myModal" <?php if ($dataTwitterCount == 0) {
-                                                                                                                            echo "disabled";
-                                                                                                                        } ?>>Preprocessing Data</button>
+                    <button class="btn btn-primary btn-md btn-block" data-bs-toggle="modal" data-bs-target="#myModal">Preprocessing Data</button>
                     <div class="modal" id="myModal">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -39,16 +22,24 @@ PreprocessingController::startPreprocessing();
 
                                 <!-- Modal body -->
                                 <div class="modal-body">
+                                    @if ($dataTwitterCount == 0)
+                                    Tidak ada Data yang bisa di Preprocessing, Silahkan ke menu <b>Import Data Excel</b> untuk import Data
+                                    @else
                                     <b><?= $dataTwitterCount ?></b> Data akan dilakukan Preprocessing, tekan mulai untuk melanjutkan.
+                                    @endif
                                 </div>
 
                                 <!-- Modal footer -->
                                 <div class="modal-footer">
+                                    @if ($dataTwitterCount == 0)
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                                    @else
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                                    <form action="{{ route('deletedata') }}" method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('startPreprocessing') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
-                                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Mulai</button>
+                                        <button type="submit" class="btn btn-primary" onclick="loadingSwal()" data-bs-dismiss="modal">Mulai</button>
                                     </form>
+                                    @endif
                                 </div>
 
                             </div>
@@ -73,11 +64,27 @@ PreprocessingController::startPreprocessing();
                 <thead>
                     <tr>
                         <th>User</th>
-                        <th>Created At</th>
-                        <th>Real Text</th>
+                        <th>Clean Text</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @if(count($teks_bersih) != 0)
+                    @foreach($teks_bersih as $teks)
+                    <tr>
+                        <td>{{ $teks->user }}</td>
+                        <td>{{ $teks->clean_text }}</td>
+                        <td>
+                            <button class="btn" data-bs-toggle="modal" data-bs-target="#modaldetail{{ $teks->id_teks_bersih }}"><span class="fa fa-bars"></span></button>
+                        </td>
+                    </tr>
+                    @endforeach
+                    @else
+                    <td colspan="5" class="text-center">Tidak ada data</td>
+                    @endif
+                </tbody>
             </table>
+            <div>{{ $teks_bersih->links('pagination::bootstrap-5') }}</div>
         </div>
     </div>
 </div>
@@ -95,15 +102,16 @@ PreprocessingController::startPreprocessing();
         });
     }
 
-    const successSwal = function() {
-        Swal.fire({
-            icon: 'success',
-            title: 'Selesai!',
-            text: 'Berhasil Preprocessing Data',
-            allowOutsideClick: false,
-            confirmButtonColor: 'rgb(67,105,215)',
-        });
-    };
+    // const successSwal = function() {
+    //     Swal.fire({
+    //         icon: 'success',
+    //         title: 'Selesai!',
+    //         text: 'Berhasil Preprocessing Data',
+    //         allowOutsideClick: false,
+    //         confirmButtonColor: 'rgb(67,105,215)',
+    //     });
+    // };
 </script>
 @include('sweetalert::alert')
+@include('modal.m_preprocessing_detail')
 @endsection
