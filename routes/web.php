@@ -24,3 +24,4 @@ Route::post('/import/delete', [ImportController::class, 'deleteData'])->name('de
 Route::get('/preprocessing', [PreprocessingController::class, 'index']);
 Route::post('/preprocessing/start', [PreprocessingController::class, 'startPreprocessing'])->name('startPreprocessing');
 Route::get('/labelling', [LabellingController::class, 'index']);
+Route::post('/labelling/start', [LabellingController::class, 'startLabelling'])->name('startLabelling');

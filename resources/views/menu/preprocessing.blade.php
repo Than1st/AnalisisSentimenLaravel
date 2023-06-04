@@ -74,7 +74,7 @@
                     <tr>
                         <td>{{ $teks->user }}</td>
                         <td>{{ $teks->clean_text }}</td>
-                        <td>
+                        <td align="center">
                             <button class="btn" data-bs-toggle="modal" data-bs-target="#modaldetail{{ $teks->id_teks_bersih }}"><span class="fa fa-bars"></span></button>
                         </td>
                     </tr>
