@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DataTwitterModel extends Model
 {
-    protected $table = 'data_twitter';
+    protected $table = 'data_raw';
     // protected $primarykey = 'id_tweet';
     public $timestamps = false;
     protected $fillable = [

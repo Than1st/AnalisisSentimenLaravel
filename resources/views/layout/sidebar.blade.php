@@ -37,6 +37,21 @@
             <i class="fas fa-fw fa-tag"></i>
             <span>Labelling</span></a>
     </li>
+    <li class="nav-item {{ request()->is('split') ? 'active' : '' }}">
+        <a class="nav-link" href="/split">
+            <i class="fas fa-fw fa-cut"></i>
+            <span>Split Data</span></a>
+    </li>
+    <li class="nav-item {{ request()->is('modelling') ? 'active' : '' }}">
+        <a class="nav-link" href="/modelling">
+            <i class="fas fa-fw fa-dumbbell"></i>
+            <span>Modelling</span></a>
+    </li>
+    <li class="nav-item {{ request()->is('pengujian') ? 'active' : '' }}">
+        <a class="nav-link" href="/pengujian">
+            <i class="fas fa-fw fa-vials"></i>
+            <span>Pengujian</span></a>
+    </li>
 
     <li class="nav-item {{ request()->is('positif') | request()->is('negatif') | request()->is('slang') | request()->is('stop') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">

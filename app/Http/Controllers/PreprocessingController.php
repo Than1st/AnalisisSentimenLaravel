@@ -13,6 +13,8 @@ class PreprocessingController extends Controller
     public function __construct()
     {
         $this->PreModel = new PreprocessingModel();
+        $stemmerFactory = new StemmerFactory();
+        $this->Stemmer = $stemmerFactory->createStemmer();
     }
 
     public function index(Request $request)
@@ -25,6 +27,14 @@ class PreprocessingController extends Controller
         $data['teks_bersih']->appends($request->all());
         return view('menu.preprocessing', $data);
     }
+
+    public function deletePreprocessing()
+    {
+        $this->PreModel->deleteDataBersih();
+        Alert::success('Berhasil', 'Data Berhasil di Import');
+        return redirect('/preprocessing');
+    }
+
     public function startPreprocessing()
     {
         $dataTwitter = $this->PreModel->getDataTwitter();
@@ -39,7 +49,7 @@ class PreprocessingController extends Controller
             }
         }
         $this->PreModel->updateAllStatusPreprocessing();
-        Alert::success('Berhasil', 'Data Berhasil di Import');
+        Alert::success('Berhasil', 'Data Berhasil di Preprocessing');
         return redirect('/preprocessing');
     }
 
@@ -48,8 +58,8 @@ class PreprocessingController extends Controller
         $caseFolding = $this->caseFolding($text);
         $cleansing = $this->cleanseSentence($caseFolding);
         $slangword = $this->slangwordConversion($cleansing);
-        $stopword = $this->stopwordRemoval($slangword);
-        $stemming = $this->stemText($stopword);
+        // $stopword = $this->stopwordRemoval($slangword);
+        $stemming = $this->stemText($slangword);
 
         return $stemming;
     }
@@ -115,7 +125,7 @@ class PreprocessingController extends Controller
         //mengubah collection ke array
         $arrSlangword = array();
         foreach ($slangwords as $value) {
-            $arrSlangword[$value->kttdkbaku] = $value->ktbaku;
+            $arrSlangword[$value->slangword] = $value->standard;
         }
         $newWord = array();
         foreach ($words as $word) {
@@ -151,12 +161,8 @@ class PreprocessingController extends Controller
 
     public function stemText($words)
     {
-        // Membuat objek Stemmer
-        $stemmerFactory = new StemmerFactory();
-        $stemmer = $stemmerFactory->createStemmer();
-
         // Melakukan stemming pada teks
-        $stemmedText = $stemmer->stem($words);
+        $stemmedText = $this->Stemmer->stem($words);
 
         return $stemmedText;
     }

@@ -13,7 +13,7 @@
                     <div class="col mr-2">
                         <div class="text-s font-weight-bold text-primary mb-2" align="center">
                             Jumlah Data</div>
-                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">20</div>
+                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">{{$dataCount}}</div>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                     <div class="col mr-2">
                         <div class="text-s font-weight-bold text-primary mb-2" align="center">
                             Jumlah Data Processing</div>
-                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">20</div>
+                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">{{$preprocessingCount}}</div>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <div class="col mr-2">
                         <div class="text-s font-weight-bold text-primary mb-2" align="center">
                             Jumlah Data Berlabel</div>
-                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">20</div>
+                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">{{$labelCount}}</div>
                     </div>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                     <div class="col mr-2">
                         <div class="text-s font-weight-bold text-primary mb-2" align="center">
                             Jumlah Data Latih</div>
-                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">20</div>
+                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">{{$latihCount}}</div>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                     <div class="col mr-2">
                         <div class="text-s font-weight-bold text-primary mb-2" align="center">
                             Jumlah Data Uji</div>
-                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">20</div>
+                        <div class="h2 mb-0 font-weight-bold text-gray-800" align="center">{{$ujiCount}}</div>
                     </div>
                 </div>
             </div>

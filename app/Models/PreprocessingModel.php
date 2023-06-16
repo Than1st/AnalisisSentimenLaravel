@@ -10,29 +10,29 @@ class PreprocessingModel extends Model
 {
     public function getDataTwitter()
     {
-        return DB::table('data_twitter')
+        return DB::table('data_raw')
             ->select('id_tweet', 'real_text')
-            ->where('status_preprocessing', 0)
+            ->where('preprocessing_status', 0)
             ->get();
     }
     public function getDataTeksBersih($keyword)
     {
-        return DB::table('teks_bersih')
-            ->select('teks_bersih.id_teks_bersih', 'teks_bersih.clean_text', 'teks_bersih.label_sentimen', 'data_twitter.user', 'data_twitter.real_text')
-            ->where('teks_bersih.clean_text', 'like', '%' . $keyword . '%')
-            ->leftJoin('data_twitter', 'teks_bersih.id_tweet', '=', 'data_twitter.id_tweet')
+        return DB::table('data_preprocessing')
+            ->select('data_preprocessing.id_preprocessing', 'data_preprocessing.clean_text', 'data_preprocessing.sentiment_label', 'data_raw.user', 'data_raw.real_text')
+            ->where('data_preprocessing.clean_text', 'like', '%' . $keyword . '%')
+            ->leftJoin('data_raw', 'data_preprocessing.id_tweet', '=', 'data_raw.id_tweet')
             ->paginate(10);
     }
 
     public function insertTeksBersih($data)
     {
-        return DB::table('teks_bersih')->insert($data);
+        return DB::table('data_preprocessing')->insert($data);
     }
 
     public function updateAllStatusPreprocessing()
     {
-        return DB::table('data_twitter')
-            ->update(['status_preprocessing' => 1]);
+        return DB::table('data_raw')
+            ->update(['preprocessing_status' => 1]);
     }
 
     public function getStopword()
@@ -44,11 +44,15 @@ class PreprocessingModel extends Model
     public function getSlangword()
     {
         return DB::table('slangword')
-            ->select('ktbaku', 'kttdkbaku')
+            ->select('standard', 'slangword')
             ->get();
     }
     public function getDataTwitterCount()
     {
-        return DB::table('data_twitter')->where('status_preprocessing', 0)->count();
+        return DB::table('data_raw')->where('preprocessing_status', 0)->count();
+    }
+    public function deleteDataBersih()
+    {
+        return DB::table('data_preprocessing')->delete();
     }
 }
