@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\ModellingModel;
 use Illuminate\Http\Request;
 use Phpml\Classification\NaiveBayes;
+use Phpml\Exception\FileException;
+use Phpml\Exception\InvalidOperationException;
+use Phpml\Exception\SerializeException;
 use Phpml\FeatureExtraction\TfIdfTransformer;
 use Phpml\Tokenization\WhitespaceTokenizer;
 use Phpml\FeatureExtraction\TokenCountVectorizer;
@@ -21,15 +24,18 @@ class ModellingController extends Controller
     {
         $this->ModellingModel = new ModellingModel();
     }
+
     public function index(Request $request)
     {
         $keyword = $request->keyword;
         $data = [
             'trainings' => $this->ModellingModel->getAllDataModel($keyword),
+            'dataTrainings' => $this->ModellingModel->getDataTraining()
         ];
         $data['trainings']->appends($request->all());
         return view('menu.modelling', $data);
     }
+
     public function deleteModel(Request $request)
     {
         $this->ModellingModel->deleteModel($request->id_model);
@@ -37,6 +43,12 @@ class ModellingController extends Controller
         Alert::success('Berhasil', 'Sukses Menghapus Model');
         return redirect('/modelling');
     }
+
+    /**
+     * @throws SerializeException
+     * @throws FileException
+     * @throws InvalidOperationException
+     */
     public function startModelling()
     {
         $dataTraining = $this->ModellingModel->getDataTraining();
@@ -62,12 +74,12 @@ class ModellingController extends Controller
         // Definisikan langkah-langkah dalam pipeline
         $pipeline = new Pipeline([$vectorizer, $tfidfTransformer], $naiveBayes);
 
-        // Latih model menggunakan data contoh
+        // Latih model menggunakan data
         $pipeline->train($documents, $labels);
 
         // Simpan model ke file
         $dt = new DateTime("now", new DateTimeZone('Asia/Jakarta'));
-        $date =  $dt->format('d-m-Y h-i-s-A');
+        $date = $dt->format('d-m-Y h-i-s-A');
         $fileName = 'Model ' . $date;
         // Simpan Info Model ke Database data_model
         $this->saveToDatabase($fileName);
@@ -77,6 +89,7 @@ class ModellingController extends Controller
         Alert::success('Berhasil', 'Sukses Membuat Model');
         return redirect('/modelling');
     }
+
     public function saveToDatabase($fileName)
     {
         $data = [

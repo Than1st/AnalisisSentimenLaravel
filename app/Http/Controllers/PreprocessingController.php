@@ -15,6 +15,7 @@ class PreprocessingController extends Controller
         $this->PreModel = new PreprocessingModel();
         $stemmerFactory = new StemmerFactory();
         $this->Stemmer = $stemmerFactory->createStemmer();
+        $this->StopWords = $this->PreModel->getStopword();
     }
 
     public function index(Request $request)
@@ -55,11 +56,11 @@ class PreprocessingController extends Controller
 
     public function textPreprocessing($text)
     {
-        $caseFolding = $this->caseFolding($text);
-        $cleansing = $this->cleanseSentence($caseFolding);
+        $casefolding = $this->caseFolding($text);
+        $cleansing = $this->cleanseSentence($casefolding);
         $slangword = $this->slangwordConversion($cleansing);
-        // $stopword = $this->stopwordRemoval($slangword);
-        $stemming = $this->stemText($slangword);
+        $stopword = $this->stopwordRemoval($slangword);
+        $stemming = $this->stemText($stopword);
 
         return $stemming;
     }
@@ -69,51 +70,31 @@ class PreprocessingController extends Controller
         return strtolower($text);
     }
 
-    function cleanseSentence($text)
+    function cleanseSentence($kalimat)
     {
-        // Menghapus kata yang mengandung karakter spesial
-        $cleanedSentence = $this->removeSpecialSentences($text);;
+        // Menghapus mention
+        $kalimat = preg_replace('/@\w+/', '', $kalimat);
 
-        // Menghapus multiple spasi dan menggantinya dengan satu spasi
-        $cleanedSentence = preg_replace('/\s+/', ' ', $cleanedSentence);
+        // Menghapus hashtag
+        $kalimat = preg_replace('/#\w+/', '', $kalimat);
 
-        // Menghapus angka yang tidak dibutuhkan
-        $cleanedSentence = preg_replace('/\d+/', '', $cleanedSentence);
+        // Menghapus link
+        $kalimat = preg_replace('/https?:\/\/[^\s]+/', '', $kalimat);
 
-        // Menghapus spasi di awal dan akhir kalimat
-        $cleanedSentence = trim($cleanedSentence);
+        // Menghapus selain angka dan huruf
+        $kalimat = preg_replace('/[^A-Za-z0-9\s]+/', '', $kalimat);
 
-        return $cleanedSentence;
-    }
+        // Menghapus spasi berlebih
+        $kalimat = preg_replace('/\s+/', ' ', $kalimat);
 
-    function removeSpecialSentences($text)
-    {
-        // Pisahkan teks menjadi kalimat-kalimat
-        $sentences = explode(' ', $text);
+        // Menghapus kata yang hanya memiliki 1 atau 2 huruf
+        $kata = explode(' ', $kalimat);
+        $kata = array_filter($kata, function ($value) {
+            return strlen($value) > 2;
+        });
+        $kalimat = implode(' ', $kata);
 
-        // Buat daftar kalimat baru tanpa karakter spesial
-        $cleanSentences = array();
-        foreach ($sentences as $sentence) {
-            $containsSpecialChar = false;
-            $specialChars = array('@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '[', ']', '{', '}', '|', '\\', ';', ':', '\'', '"', ',', '<', '>', '/');
-
-            foreach ($specialChars as $char) {
-                if (strpos($sentence, $char) !== false) {
-                    $containsSpecialChar = true;
-                    break;
-                }
-            }
-
-            // Tambahkan kalimat ke daftar baru jika tidak mengandung karakter spesial
-            if (!$containsSpecialChar) {
-                $cleanSentences[] = $sentence;
-            }
-        }
-
-        // Gabungkan kembali kalimat-kalimat menjadi teks baru
-        $cleanText = implode(' ', $cleanSentences);
-
-        return $cleanText;
+        return $kalimat;
     }
 
     public function slangwordConversion($text)
@@ -139,21 +120,20 @@ class PreprocessingController extends Controller
         return implode(' ', $newWord);
     }
 
-    public function stopwordRemoval($words)
+    public function stopwordRemoval($slangword)
     {
-        //ambil kamus stopword
-        $stopwords = $this->PreModel->getStopword();
-        $rem_stopword = explode(" ", $words);
+        $stopWords = $this->StopWords;
+        $words = explode(" ", $slangword);
         $str_data = array();
         //mengubah collection ke array
         $arrStopword = array();
-        foreach ($stopwords as $stop) {
+        foreach ($stopWords as $stop) {
             $arrStopword[] = $stop->stopword;
         }
-        foreach ($rem_stopword as $value) {
+        foreach ($words as $word) {
             //cek apakah kata tidak ada di dalam kamus
-            if (!in_array($value, $arrStopword)) {
-                $str_data[] = "" . $value;
+            if (!in_array($word, $arrStopword)) {
+                $str_data[] = "" . $word;
             }
         }
         return implode(" ", $str_data);

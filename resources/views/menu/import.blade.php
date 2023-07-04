@@ -16,6 +16,23 @@
         color: #3158C9;
         border: 1px solid #3158C9;
     }
+
+    input[disabled]::file-selector-button {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    input[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    input[disabled]::file-selector-button:hover {
+        color: white;
+        background-color: #3158C9;
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 </style>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Import Data Excel</h1>
@@ -31,7 +48,7 @@
                 <li>XLSX</li>
             </ul>
             <div class="form-group">
-                <input type="file" class="form-control-file" name="fileImport" onchange="onChangeFile(this.value)">
+                <input type="file" class="form-control-file" name="fileImport" onchange="onChangeFile(this.value)" @if(count($tweets)!=0) disabled @endif>
                 @error('fileImport')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
@@ -61,7 +78,7 @@
 
                                 <!-- Modal body -->
                                 <div class="modal-body">
-                                    Aksi ini akan menghapus semua yang berkaitan dengan data seperti <b>Preprocessing</b>, <b>Data Uji</b>, dan <b>Data Latih</b>. Apakah anda yakin ingin menghapus data?
+                                    Aksi ini akan menghapus semua yang berkaitan dengan data twitter, seperti data <b>Preprocessing</b>. Apakah anda yakin ingin menghapus data?
                                 </div>
 
                                 <!-- Modal footer -->
@@ -91,7 +108,7 @@
                     </form>
                 </div>
             </div>
-            <table class="table table-bordered" width="100%" cellspacing="0">
+            <table class="table table-striped table-hover table-bordered" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>User</th>

@@ -18,6 +18,7 @@ class SplitModel extends Model
         return DB::table('data_preprocessing')
             ->select('data_raw.user', 'data_raw.created_at', 'data_raw.real_text', 'data_preprocessing.clean_text', 'data_preprocessing.sentiment_label')
             ->leftjoin('data_raw', 'data_preprocessing.id_tweet', '=', 'data_raw.id_tweet')
+            ->whereNotNull('data_preprocessing.sentiment_label')
             ->get();
     }
 

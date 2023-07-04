@@ -71,16 +71,24 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-                Labelling akan dimulai, klik mulai untuk lanjut
+                @if (count($dataTrainings) == 0)
+                Tidak ada data latih, silahkan ke menu <b>Split Data</b> untuk mendapatkan data latih
+                @else
+                Modelling akan dimulai, klik mulai untuk lanjut
+                @endif
             </div>
 
             <!-- Modal footer -->
             <div class="modal-footer">
+                @if (count($dataTrainings) == 0)
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                @else
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
                 <form action="{{ route('startModelling') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" onclick="loadingSwal()">Mulai</button>
                 </form>
+                @endif
             </div>
 
         </div>

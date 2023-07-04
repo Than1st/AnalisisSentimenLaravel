@@ -33,4 +33,9 @@ class PengujianModel extends Model
     {
         return DB::table('data_history')->insert($data);
     }
+
+    public function updateRiwayat($data)
+    {
+        return DB::table('data_history')->update($data);
+    }
 }

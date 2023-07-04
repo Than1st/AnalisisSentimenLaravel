@@ -7,6 +7,7 @@ use App\Http\Controllers\ModellingController;
 use App\Http\Controllers\PengujianController;
 use App\Http\Controllers\PreprocessingController;
 use App\Http\Controllers\SplitController;
+use App\Http\Controllers\VisualisasiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,3 +45,5 @@ Route::post('/modelling/delete', [ModellingController::class, 'deleteModel']);
 
 Route::get('/pengujian', [PengujianController::class, 'index']);
 Route::post('/pengujian/start', [PengujianController::class, 'startTesting'])->name('startPengujian');
+
+Route::get('/visualisasi', [VisualisasiController::class, 'index']);

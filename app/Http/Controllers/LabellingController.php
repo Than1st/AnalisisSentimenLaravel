@@ -20,7 +20,8 @@ class LabellingController extends Controller
         $keyword = $request->keyword;
         $data = [
             'dataPreprocessing' => $this->LabelModel->getDataPreprocessing($keyword),
-            'dataPreprocessingCount' => $this->LabelModel->getDataPreprocessingCount()
+            'dataPreprocessingCount' => $this->LabelModel->getDataPreprocessingCount(),
+            'dataSentimentLabelGroup' => $this->LabelModel->getSentimentLabelGroup(),
         ];
         $data['dataPreprocessing']->appends($request->all());
         return view('menu.labelling', $data);
@@ -52,7 +53,7 @@ class LabellingController extends Controller
         return redirect('/labelling');
     }
 
-    public function labelling($text)
+    public function labelling($text): ?string
     {
         $positives = array();
         foreach ($this->LabelModel->getLexiconPositive() as $pos) {
@@ -65,7 +66,6 @@ class LabellingController extends Controller
         $sentences = explode(" ", $text);
         $positive = 0;
         $negative = 0;
-        $label = "";
         foreach ($sentences as $sentence) {
             if (in_array($sentence, $positives)) {
                 $positive++;
@@ -75,9 +75,10 @@ class LabellingController extends Controller
                 $negative++;
             }
         }
-        if ($positive > $negative) {
+        $sum = $positive - $negative;
+        if ($sum > 0) {
             $label = "positif";
-        } else if ($positive < $negative) {
+        } else if ($sum < 0) {
             $label = "negatif";
         } else {
             $label = null;

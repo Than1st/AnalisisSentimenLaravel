@@ -44,11 +44,15 @@
                             <td>{{ $teks->user }}</td>
                             <td>{{ $teks->clean_text }}</td>
                             <td>
+                                @if (count($dataSentimentLabelGroup) > 1)
                                 <select class="custom-select" id="sentiment{{ $teks->id_preprocessing }}" style="width: 200px;">
                                     <option selected disabled>- Pilih Sentiment-</option>
                                     <option value="positif" {{ $teks->sentiment_label == "positif" ? 'selected' : '' }}>Positif</option>
                                     <option value="negatif" {{ $teks->sentiment_label == "negatif" ? 'selected' : '' }}>Negatif</option>
                                 </select>
+                                @else
+                                {{$teks->sentiment_label}}
+                                @endif
                             </td>
                             <td align="center">
                                 <button class="btn" data-bs-toggle="modal" data-bs-target="#modaldetail{{ $teks->id_preprocessing }}"><span class="fa fa-bars"></span></button>
@@ -62,7 +66,7 @@
                                 updateDatabase(Id, selectedValue);
                                 toast.fire({
                                     icon: 'success',
-                                    title: 'Berhasil Ubah Sentimen'
+                                    title: 'Berhasil Ubah Label Sentimen'
                                 });
                             });
                         </script>
@@ -90,16 +94,21 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-                @if ($dataPreprocessingCount == 0)
+                @if(count($dataPreprocessing) != 0)
+                @if (count($dataSentimentLabelGroup) > 1)
                 Tidak ada Data yang bisa diberi Label, Silahkan ke menu <b>Import Data Excel</b> -> Lakukan <b>Preprocessing</b> -> Setelahnya anda bisa melakukan <b>Labelling</b>
                 @else
                 <b>{{ $dataPreprocessingCount }}</b> Data akan dilakukan Labelling Otomatis Berdasarkan Kamus, tekan mulai untuk melanjutkan.
+                @endif
+                @else
+                Data Kosong silahkan ke menu <b>Import Data Excel</b> untuk menginput data
                 @endif
             </div>
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                @if ($dataPreprocessingCount == 0)
+                @if(count($dataPreprocessing) != 0)
+                @if (count($dataSentimentLabelGroup) > 1)
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
                 @else
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
@@ -108,12 +117,16 @@
                     <button type="submit" class="btn btn-primary" onclick="loadingSwal()" data-bs-dismiss="modal">Mulai</button>
                 </form>
                 @endif
+                @else
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                @endif
             </div>
 
         </div>
     </div>
 </div>
 @foreach ($dataPreprocessing as $teks)
+@if($teks->sentiment_label != null)
 <div class="modal fade" id="modaldetail{{ $teks->id_preprocessing }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
@@ -145,6 +158,7 @@
         </div>
     </div>
 </div>
+@endif
 @endforeach
 <script>
     // Fungsi untuk memperbarui database

@@ -13,11 +13,14 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class ImportController extends Controller
 {
+    private ImportModel $ImportModel;
+
     public function __construct()
     {
         $this->ImportModel = new ImportModel();
     }
-    public function index(Request $request)
+
+    public function index(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
         $keyword = $request->keyword;
         $data = [
@@ -26,6 +29,7 @@ class ImportController extends Controller
         $data['tweets']->appends($request->all());
         return view('menu.import', $data);
     }
+
     public function upload(Request $request)
     {
         request()->validate([
@@ -40,6 +44,7 @@ class ImportController extends Controller
         }
         return redirect('/import');
     }
+
     public function deleteData(Request $request)
     {
         if ($this->ImportModel->deleteAllData()) {

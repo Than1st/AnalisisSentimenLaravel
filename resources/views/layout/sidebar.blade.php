@@ -52,15 +52,24 @@
             <i class="fas fa-fw fa-vials"></i>
             <span>Pengujian</span></a>
     </li>
+    <li class="nav-item {{ request()->is('visualisasi') ? 'active' : '' }}">
+        <a class="nav-link" href="/visualisasi">
+            <i class="fas fa-fw fa-chart-bar"></i>
+            <span>Visualisasi Hasil</span></a>
+    </li>
 
     <li class="nav-item {{ request()->is('positif') | request()->is('negatif') | request()->is('slang') | request()->is('stop') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+           aria-controls="collapseTwo">
             <i class="fas fa-fw fa-th-large"></i>
             <span>Kamus Kata</span>
         </a>
-        <div id="collapseTwo" class="collapse {{ request()->is('positif') | request()->is('negatif') | request()->is('slang') | request()->is('stop') ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseTwo"
+             class="collapse {{ request()->is('positif') | request()->is('negatif') | request()->is('slang') | request()->is('stop') ? 'show' : '' }}"
+             aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item {{ request()->is('positif') ? 'active' : '' }}" href="/trainset">Kata Positif</a>
+                <a class="collapse-item {{ request()->is('positif') ? 'active' : '' }}" href="/trainset">Kata
+                    Positif</a>
                 <a class="collapse-item {{ request()->is('negatif') ? 'active' : '' }}" href="/kereta">Kata Negatif</a>
                 <a class="collapse-item {{ request()->is('slang') ? 'active' : '' }}" href="/lokasi">Slang Word</a>
                 <a class="collapse-item {{ request()->is('stop') ? 'active' : '' }}" href="/titik">Stop Word</a>
