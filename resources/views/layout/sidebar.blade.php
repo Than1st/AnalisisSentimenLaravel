@@ -58,21 +58,22 @@
             <span>Visualisasi Hasil</span></a>
     </li>
 
-    <li class="nav-item {{ request()->is('positif') | request()->is('negatif') | request()->is('slang') | request()->is('stop') ? 'active' : '' }}">
+    <li class="nav-item {{ request()->is('positif') | request()->is('negatif') | request()->is('slangword') | request()->is('stopword') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
            aria-controls="collapseTwo">
             <i class="fas fa-fw fa-th-large"></i>
             <span>Kamus Kata</span>
         </a>
         <div id="collapseTwo"
-             class="collapse {{ request()->is('positif') | request()->is('negatif') | request()->is('slang') | request()->is('stop') ? 'show' : '' }}"
+             class="collapse {{ request()->is('positif') | request()->is('negatif') | request()->is('slangword') | request()->is('stopword') ? 'show' : '' }}"
              aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item {{ request()->is('positif') ? 'active' : '' }}" href="/trainset">Kata
+                <a class="collapse-item {{ request()->is('positif') ? 'active' : '' }}" href="/positif">Kata
                     Positif</a>
-                <a class="collapse-item {{ request()->is('negatif') ? 'active' : '' }}" href="/kereta">Kata Negatif</a>
-                <a class="collapse-item {{ request()->is('slang') ? 'active' : '' }}" href="/lokasi">Slang Word</a>
-                <a class="collapse-item {{ request()->is('stop') ? 'active' : '' }}" href="/titik">Stop Word</a>
+                <a class="collapse-item {{ request()->is('negatif') ? 'active' : '' }}" href="/negatif">Kata Negatif</a>
+                <a class="collapse-item {{ request()->is('slangword') ? 'active' : '' }}" href="/slangword">Slang
+                    Word</a>
+                <a class="collapse-item {{ request()->is('stopword') ? 'active' : '' }}" href="/stopword">Stop Word</a>
             </div>
         </div>
     </li>

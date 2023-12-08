@@ -2,11 +2,15 @@
 
 use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\KataNegatifController;
+use App\Http\Controllers\KataPositifController;
 use App\Http\Controllers\LabellingController;
 use App\Http\Controllers\ModellingController;
 use App\Http\Controllers\PengujianController;
 use App\Http\Controllers\PreprocessingController;
+use App\Http\Controllers\SlangwordController;
 use App\Http\Controllers\SplitController;
+use App\Http\Controllers\StopwordController;
 use App\Http\Controllers\VisualisasiController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,3 +51,8 @@ Route::get('/pengujian', [PengujianController::class, 'index']);
 Route::post('/pengujian/start', [PengujianController::class, 'startTesting'])->name('startPengujian');
 
 Route::get('/visualisasi', [VisualisasiController::class, 'index']);
+
+Route::resource('/positif', KataPositifController::class);
+Route::resource('/negatif', KataNegatifController::class);
+Route::resource('/slangword', SlangwordController::class);
+Route::resource('/stopword', StopwordController::class);

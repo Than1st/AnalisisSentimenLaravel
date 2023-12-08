@@ -125,6 +125,8 @@
                             @csrf
                             <input type="text" name="namaModel" id="namaModel" value="" hidden>
                             <input type="text" name="jumlahSentimen" id="jumlahSentimen" value="" hidden>
+                            <input type="text" name="trainingPositif" id="trainingPositif" value="" hidden>
+                            <input type="text" name="trainingNegatif" id="trainingNegatif" value="" hidden>
                             <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"
                                     onclick="loadingSwal()">Mulai
                             </button>
@@ -149,6 +151,8 @@
             document.getElementById("text_negatif").innerHTML = myArray[2];
             document.getElementById("namaModel").value = myArray[3];
             document.getElementById("jumlahSentimen").value = myArray[0];
+            document.getElementById("trainingPositif").value = myArray[1];
+            document.getElementById("trainingNegatif").value = myArray[2];
             document.getElementById("pengujianButton").disabled = false;
         }
     </script>
@@ -165,55 +169,6 @@
                 showConfirmButton: false
             });
         }
-
-        MathJax = {
-            loader: {
-                load: ['input/asciimath', 'output/chtml', 'ui/menu']
-            },
-            asciimath: {
-                delimiters: [
-                    ['$', '$'],
-                    ['`', '`']
-                ]
-            }
-        };
-        Highcharts.chart('chart', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Data Prediksi'
-            },
-            xAxis: {
-                type: 'category',
-                labels: {
-                    rotation: -45,
-                    style: {
-                        fontSize: '13px',
-                        fontFamily: 'Verdana, sans-serif'
-                    }
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Banyak Data'
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            tooltip: {
-                pointFormat: '<b>{point.y}</b>'
-            },
-            series: [{
-                name: 'Banyak Data',
-                data: <?php echo json_encode($dataChart); ?>
-            }]
-        });
-    </script>
-    <script type="text/javascript" id="MathJax-script" async
-            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js">
     </script>
     @include('sweetalert::alert')
 @endsection

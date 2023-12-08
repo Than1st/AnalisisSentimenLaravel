@@ -72,8 +72,13 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     @php
-                        $dataLatih = intval(($teksBersihCount * 80) / 100);
-                        $dataUji = $teksBersihCount - $dataLatih
+                        if ($teksBersihCount % 2 == 0){
+                            $dataLatih = ceil($teksBersihCount * (80 / 100)) - 1;
+                            $dataUji = $teksBersihCount - $dataLatih;
+                        } else {
+                            $dataLatih = ceil($teksBersihCount * (80 / 100));
+                            $dataUji = $teksBersihCount - $dataLatih;
+                        }
                     @endphp
                     @if($teksBersihCount > 0 && $dataLatihCount == 0 && $dataUjiCount == 0)
                         Data akan di Split dengan rasio 80:20, 80% Data Latih dan 20% Data Uji. <br>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PengujianModel;
 use Illuminate\Http\Request;
+use Phpml\FeatureExtraction\TfIdfTransformer;
 use Phpml\FeatureExtraction\TokenCountVectorizer;
 use Phpml\ModelManager;
 use DateTime;
@@ -21,16 +22,10 @@ class PengujianController extends Controller
 
     public function index()
     {
-        $dataChart = array();
-        foreach ($this->UjiModel->getRiwayat() as $riwayat) {
-            array_push($dataChart, array("Positive", $riwayat->predict_positive));
-            array_push($dataChart, array("Negative", $riwayat->predict_negative));
-        }
         $data = [
             'models' => $this->UjiModel->getAllModel(),
             'testingCount' => $this->UjiModel->getDataUji()->count(),
             'riwayats' => $this->UjiModel->getRiwayat(),
-            'dataChart' => $dataChart,
         ];
         return view('menu.pengujian', $data);
     }
@@ -50,34 +45,34 @@ class PengujianController extends Controller
         $modelManager = new ModelManager();
         $pipeline = $modelManager->restoreFromFile($modelFile);
         $testings = $this->UjiModel->getDataUji();
-//        $counter = 1;
-//        $count = count($testings);
-//        foreach ($testings as $testing) {
-//            // Ubah teks menjadi array
-//            $newTextArray = [$testing->clean_text];
-//
-//            // Lakukan prediksi menggunakan model yang telah dimuat
-//            $predictedLabels = $pipeline->predict($newTextArray);
-//
-//            // Ambil hasil prediksi
-//            $prediction = $predictedLabels[0];
-//
-//            if ($testing->sentiment_label == "positif" && $prediction == "positif") {
-//                $truePositive++;
-//                $predictPositive++;
-//            } else if ($testing->sentiment_label == "positif" && $prediction == "negatif") {
-//                $falseNegative++;
-//                $predictNegative++;
-//            } else if ($testing->sentiment_label == "negatif" && $prediction == "negatif") {
-//                $trueNegative++;
-//                $predictNegative++;
-//            } else {
-//                $falsePositive++;
-//                $predictPositive++;
-//            }
-//            Log::debug("$counter / $count");
-//            $counter++;
-//        }
+        $counter = 1;
+        $count = count($testings);
+        foreach ($testings as $testing) {
+            // Ubah teks menjadi array
+            $newTextArray = [$testing->clean_text];
+
+            // Lakukan prediksi menggunakan model yang telah dimuat
+            $predictedLabels = $pipeline->predict($newTextArray);
+
+            // Ambil hasil prediksi
+            $prediction = $predictedLabels[0];
+
+            if ($testing->sentiment_label == "positif" && $prediction == "positif") {
+                $truePositive++;
+                $predictPositive++;
+            } else if ($testing->sentiment_label == "positif" && $prediction == "negatif") {
+                $falseNegative++;
+                $predictNegative++;
+            } else if ($testing->sentiment_label == "negatif" && $prediction == "negatif") {
+                $trueNegative++;
+                $predictNegative++;
+            } else {
+                $falsePositive++;
+                $predictPositive++;
+            }
+            Log::debug("$counter / $count");
+            $counter++;
+        }
         $arrayUji = $this->UjiModel->getDataUji();
         $dataUji = [];
         foreach ($arrayUji as $uji) {
@@ -86,38 +81,57 @@ class PengujianController extends Controller
         // Inisialisasi tokenizer
         $tokenizer = new WhitespaceTokenizer();
 
-        // Inisialisasi vektorisasi token
         $vectorizer = new TokenCountVectorizer($tokenizer);
-        // Build the dictionary.
         $vectorizer->fit($dataUji);
 
-        print_r($vectorizer->getVocabulary());
+        $vectorizer->transform($dataUji);
+        $vocabulary = $vectorizer->getVocabulary();
+        $vocab = implode(", ", $vocabulary);
+        // Menghitung kemunculan kata dalam data uji yang telah ditransformasi
+        $wordCounts = [];
+        foreach ($dataUji as $document) {
+            foreach ($document as $featureIndex => $count) {
+                $word = $vocabulary[$featureIndex];
+                if (!isset($wordCounts[$word])) {
+                    $wordCounts[$word] = 0;
+                }
+                $wordCounts[$word] += $count;
+            }
+        }
 
-// Transform the provided text samples into a vectorized list.
-//        $vectorizer->transform($samples);
-//        $dt = new DateTime("now", new DateTimeZone('Asia/Jakarta'));
-//        $date = $dt->format('Y-m-d H:i:s');
-//        $data = [
-//            'created_at' => $date,
-//            'true_positive' => $truePositive,
-//            'false_positive' => $falsePositive,
-//            'true_negative' => $trueNegative,
-//            'false_negative' => $falseNegative,
-//            'data_testing' => count($testings),
-//            'data_training' => $request->jumlahSentimen,
-//            'predict_positive' => $predictPositive,
-//            'predict_negative' => $predictNegative
-//        ];
-//        if ($this->UjiModel->getRiwayat->count() != 0) {
-//            $this->UjiModel->insertRiwayat($data);
-//            Alert::success('Berhasil', 'Sukses Uji silahkan cek riwayat');
-//            return redirect('/pengujian');
-//        } else {
-//            $this->UjiModel->updateRiwayat($data);
-//            Alert::success('Berhasil', 'Sukses Uji silahkan cek riwayat');
-//            return redirect('/pengujian');
-//        }
-//        Alert::success('Berhasil', '' . $truePositive . '');
-//        return redirect('/pengujian');
+        // Menampilkan kata-kata yang sering muncul dan jumlah kemunculannya
+        $weights = [];
+        foreach ($wordCounts as $word => $count) {
+            $weights[] = $count;
+        }
+        $weight = implode(", ", $weights);
+        $dt = new DateTime("now", new DateTimeZone('Asia/Jakarta'));
+        $date = $dt->format('Y-m-d H:i:s');
+        $data = [
+            'created_at' => $date,
+            'true_positive' => $truePositive,
+            'false_positive' => $falsePositive,
+            'true_negative' => $trueNegative,
+            'false_negative' => $falseNegative,
+            'data_testing' => count($testings),
+            'data_training' => $request->jumlahSentimen,
+            'data_training_positive' => $request->trainingPositif,
+            'data_training_negative' => $request->trainingNegatif,
+            'predict_positive' => $predictPositive,
+            'predict_negative' => $predictNegative,
+            'vocabulary' => $vocab,
+            'vocab_weight' => $weight,
+        ];
+        if (count($this->UjiModel->getRiwayat()) == 0) {
+            $this->UjiModel->insertRiwayat($data);
+            Alert::success('Berhasil', 'Sukses Melakukan Pengujian');
+            return redirect('/visualisasi');
+        } else {
+            $this->UjiModel->updateRiwayat($data);
+            Alert::success('Berhasil', 'Sukses Melakukan Pengujian');
+            return redirect('/visualisasi');
+        }
+        Alert::success('Berhasil', '' . $truePositive . '');
+        return redirect('/pengujian');
     }
 }
